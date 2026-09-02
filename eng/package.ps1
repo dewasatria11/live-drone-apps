@@ -26,9 +26,9 @@ Copy-Item (Join-Path $root 'vendor/mediamtx/win-x64/mediamtx.exe') (Join-Path $s
 Copy-Item (Join-Path $root 'eng/versions.json') (Join-Path $staging 'media/versions.json') -Force
 Copy-Item (Join-Path $root 'THIRD_PARTY_NOTICES.md') $staging -Force
 $isccCandidates = @(
-    (Get-Command ISCC.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -ErrorAction SilentlyContinue),
     "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
-    "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+    "$env:ProgramFiles\Inno Setup 6\ISCC.exe",
+    (Get-Command ISCC.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -ErrorAction SilentlyContinue)
 ) | Where-Object { $_ -and (Test-Path $_) }
 $iscc = $isccCandidates | Select-Object -First 1
 if (-not $iscc) { throw 'Inno Setup 6 tidak ditemukan pada runner Windows.' }
