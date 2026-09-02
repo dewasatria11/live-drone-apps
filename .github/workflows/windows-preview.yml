@@ -1,0 +1,97 @@
+name: Windows Preview Installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versi preview sintetis (contoh v0.1.0-alpha.1)'
+        required: false
+        default: 'v0.1.0-alpha.1'
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  preview:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout main terbaru
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: 8.0.130
+
+      - name: Restore dan verifikasi MediaMTX Windows x64
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts/diagnostics | Out-Null
+          ./eng/fetch-mediamtx.ps1 -RuntimeIdentifier win-x64
+          ./eng/verify-vendor.ps1 -RuntimeIdentifier win-x64
+
+      - name: Install pinned test and packaging tools
+        shell: pwsh
+        run: |
+          choco install ffmpeg --version=8.0.1 --allow-downgrade --yes --no-progress
+          choco install innosetup --version=6.7.1 --allow-downgrade --yes --no-progress
+          $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+          if (-not ((ffmpeg -version | Select-Object -First 1) -match '^ffmpeg version 8\.0\.1')) { throw 'FFmpeg test tooling bukan versi 8.0.1.' }
+          if (-not (Get-Command ISCC.exe -ErrorAction SilentlyContinue)) { throw 'Inno Setup tidak ditemukan.' }
+
+      - name: Restore solution
+        run: dotnet restore AlIkhsanMedia.Drone.sln
+
+      - name: Build Release termasuk WPF
+        run: dotnet build AlIkhsanMedia.Drone.sln --configuration Release --no-restore -bl:artifacts/diagnostics/preview-build.binlog
+
+      - name: Jalankan seluruh test
+        run: dotnet test AlIkhsanMedia.Drone.sln --configuration Release --no-build --logger "trx;LogFilePrefix=preview-windows" --logger "console;verbosity=normal" --results-directory artifacts/test-results
+
+      - name: Package installer self-contained x64
+        shell: pwsh
+        env:
+          PREVIEW_VERSION: ${{ inputs.version }}
+        run: |
+          $version = if ([string]::IsNullOrWhiteSpace($env:PREVIEW_VERSION)) { 'v0.1.0-alpha.1' } else { $env:PREVIEW_VERSION }
+          if ($version -notmatch '^v\d+\.\d+\.\d+-(alpha|beta|rc)\.\d+$') { throw "Versi preview tidak valid: $version" }
+          ./eng/package.ps1 -Version $version -Configuration Release
+          $installer = "artifacts/release/AlIkhsanMedia-DroneVersion-Setup-$version.exe"
+          if (-not (Test-Path $installer)) { throw "Installer tidak ditemukan: $installer" }
+          if ((Get-Item $installer).Length -lt 100000) { throw 'Installer terlalu kecil atau bukan paket valid.' }
+          "Commit SHA: $env:GITHUB_SHA`nStatus: manual validation pending`n`nIni adalah installer preview dari branch main. Belum ada GitHub Release dan belum tervalidasi pada hardware DJI/vMix." | Set-Content artifacts/release/PREVIEW_RELEASE_NOTES.md -Encoding utf8
+          $expected = @($installer, 'artifacts/release/SHA256SUMS.txt', 'artifacts/release/THIRD_PARTY_NOTICES.md', 'artifacts/release/PREVIEW_RELEASE_NOTES.md')
+          foreach ($file in $expected) { if (-not (Test-Path $file)) { throw "Asset preview tidak ditemukan: $file" } }
+
+      - name: Upload installer preview
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: AlIkhsanMedia-DroneVersion-preview-${{ github.sha }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            artifacts/release/AlIkhsanMedia-DroneVersion-Setup-*.exe
+            artifacts/release/SHA256SUMS.txt
+            artifacts/release/THIRD_PARTY_NOTICES.md
+            artifacts/release/PREVIEW_RELEASE_NOTES.md
+
+      - name: Upload diagnostics jika gagal
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: windows-preview-failure-${{ github.run_id }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            artifacts/test-results/**
+            artifacts/diagnostics/**
+            **/runtime/*.log
