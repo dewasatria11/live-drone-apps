@@ -13,6 +13,7 @@ internal sealed class RuntimeSession : IAsyncDisposable
     private readonly SetupPortalService portal;
     public IReadOnlyDictionary<StreamSlotId, SetupLink> SetupLinks { get; }
     public int PortalPort { get; }
+    public int PreviewPort { get; } = 8889;
     private readonly string binaryPath; private readonly string binaryHash; private readonly IPAddress adapterAddress; private readonly PortSettings ports; private readonly string settingsJson;
     public DashboardViewModel Dashboard { get; }
     public IReadOnlyList<StreamSlot> Slots { get; }
@@ -28,7 +29,7 @@ internal sealed class RuntimeSession : IAsyncDisposable
         var slots = loaded.Settings.Slots.Select(s => new StreamSlot(new StreamSlotId(s.Id), s.DisplayName, s.Enabled, s.ProtectedStreamKey, StreamRuntimeState.Disabled)).ToArray(); var clearKeys = loaded.Settings.Slots.Select(s => protector.Unprotect(s.ProtectedStreamKey)).ToArray();
         var binary = Path.Combine(AppContext.BaseDirectory, "media", "mediamtx.exe"); var manifest = Path.Combine(AppContext.BaseDirectory, "media", "versions.json"); var expectedHash = ReadWindowsHash(manifest);
         var runtime = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AlIkhsanMedia", "DroneVersion", "runtime"); var enabled = loaded.Settings.Slots.Select((slot, i) => (slot, i)).Where(x => x.slot.Enabled).ToArray(); var first = enabled.Length > 0 ? enabled[0].i : 0;
-        var path = clearKeys[first]; var activePaths = enabled.Length > 0 ? enabled.Select(x => clearKeys[x.i]).ToArray() : [path]; var ports = loaded.Settings.Ports; var config = new EngineConfiguration(binary, expectedHash, runtime, path, $"0.0.0.0:{ports.Rtmp}", $"127.0.0.1:{ports.Rtsp}", "127.0.0.1:9997", "127.0.0.1:9998", activePaths);
+        var path = clearKeys[first]; var activePaths = enabled.Length > 0 ? enabled.Select(x => clearKeys[x.i]).ToArray() : [path]; var ports = loaded.Settings.Ports; var config = new EngineConfiguration(binary, expectedHash, runtime, path, $"0.0.0.0:{ports.Rtmp}", $"127.0.0.1:{ports.Rtsp}", "127.0.0.1:9997", "127.0.0.1:9998", activePaths, "127.0.0.1:8889");
         var service = new MediaMtxService(); var started = await service.StartAsync(config, ct).ConfigureAwait(false); if (!started.Success) { await service.DisposeAsync().ConfigureAwait(false); throw new InvalidOperationException(started.OperatorMessage ?? "Penerima video gagal dimulai."); }
         var tokenStore = new SetupTokenStore(); var links = slots.Select(slot => (slot.Id, Link: tokenStore.Create(slot.Id, TimeSpan.FromMinutes(10), new SystemClock()))).ToDictionary(x => x.Id, x => x.Link); var portal = new SetupPortalService(tokenStore, new SystemClock());
         await portal.StartAsync(new SetupPortalConfiguration(candidate.Address.ToString(), ports.SetupPortal, "Al Ikhsan Media (Drone Version)"), id => { var index = slots.ToList().FindIndex(x => x.Id == id); return index < 0 ? null : new SetupPortalData("Al Ikhsan Media (Drone Version)", slots[index].DisplayName, MediaUrlBuilder.BuildRtmp(candidate.Address, ports.Rtmp, clearKeys[index]).AbsoluteUri, DateTimeOffset.UtcNow.AddMinutes(10)); }, ct).ConfigureAwait(false);

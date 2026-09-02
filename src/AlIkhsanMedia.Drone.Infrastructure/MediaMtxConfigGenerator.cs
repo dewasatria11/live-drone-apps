@@ -14,7 +14,7 @@ public static class MediaMtxConfigGenerator
             .AppendLine("readTimeout: 10s").AppendLine("writeTimeout: 10s").AppendLine("api: true").Append("apiAddress: ").AppendLine(config.ApiAddress)
             .AppendLine("metrics: true").Append("metricsAddress: ").AppendLine(config.MetricsAddress).AppendLine("pprof: false").AppendLine("playback: false")
             .AppendLine("rtsp: true").AppendLine("rtspTransports: [tcp]").Append("rtspAddress: ").AppendLine(config.RtspAddress)
-            .AppendLine("rtmp: true").Append("rtmpAddress: ").AppendLine(config.RtmpAddress).AppendLine("hls: false").AppendLine("webrtc: false").AppendLine("srt: false")
+            .AppendLine("rtmp: true").Append("rtmpAddress: ").AppendLine(config.RtmpAddress).AppendLine("hls: false").AppendLine("webrtc: true").Append("webrtcAddress: ").AppendLine(config.WebRtcAddress).AppendLine("srt: false")
             .AppendLine("pathDefaults:").AppendLine("  source: publisher").AppendLine("  overridePublisher: false").AppendLine("paths:");
         foreach (var path in config.Paths) yaml.Append("  ").Append(path).AppendLine(":").AppendLine("    source: publisher");
         return yaml.ToString();

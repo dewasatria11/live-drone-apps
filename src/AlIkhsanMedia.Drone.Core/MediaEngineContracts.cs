@@ -6,7 +6,7 @@ public readonly record struct StreamSlotId
     public StreamSlotId(Guid value) { if (value == Guid.Empty) throw new ArgumentException("UUID slot tidak boleh kosong.", nameof(value)); Value = value; }
 }
 public enum EngineState { Stopped, Starting, Ready, Restarting, Faulted }
-public sealed record EngineConfiguration(string ExecutablePath, string ExecutableSha256, string RuntimeDirectory, string StreamPath, string RtmpAddress, string RtspAddress, string ApiAddress, string MetricsAddress, IReadOnlyList<string>? ActivePaths = null)
+public sealed record EngineConfiguration(string ExecutablePath, string ExecutableSha256, string RuntimeDirectory, string StreamPath, string RtmpAddress, string RtspAddress, string ApiAddress, string MetricsAddress, IReadOnlyList<string>? ActivePaths = null, string WebRtcAddress = "127.0.0.1:8889")
 {
     public IReadOnlyList<string> Paths => ActivePaths is { Count: > 0 } ? ActivePaths : [StreamPath];
 }

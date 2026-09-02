@@ -11,7 +11,8 @@ public sealed class DashboardSlotViewModel : INotifyPropertyChanged
 {
     private StreamRuntimeState runtime;
     private readonly string streamKey;
-    internal string PathKey => streamKey;
+    public string PathKey => streamKey;
+    public string PreviewState { get; private set; } = "Preview belum dimulai";
     public StreamSlot Slot { get; }
     public string DisplayName => Slot.DisplayName;
     public StreamState State => runtime.State;
