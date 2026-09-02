@@ -157,3 +157,8 @@ tidak ada push, tag, atau publication yang diizinkan.
 - [ ] Real WPF startup orchestration, portal wiring, QR, diagnostics/support bundle,
       WebView2 preview, vMix manual validation, installer lifecycle, and DJI hardware
       validation remain incomplete and must not be marked as production-ready.
+
+Phase 3 implementation pass added a real Windows runtime session, six-slot dashboard
+ViewModel, URL/copy actions, tray, and safe-close behavior. Windows CI passed, but the
+Phase 3 gate remains open until visual QA is performed on Windows at 100/125/150% scaling;
+see `docs/PHASE3_EVIDENCE.md`.

@@ -24,7 +24,7 @@ alpha/beta/RC tetap harus melewati Windows build dan test gate.
 ## Phase 3 — WPF operator UI
 
 - [ ] Dashboard, setup wizard shell, settings, tray, dan safe-close selesai.
-- [ ] UI memakai service nyata tanpa production mock.
+- [x] Dashboard dan tray menggunakan service/runtime boundary nyata tanpa production mock.
 - [ ] Visual QA 100%, 125%, dan 150% selesai.
 
 ## Phase 4 — Portal, firewall, dan diagnostics
