@@ -42,8 +42,9 @@ public partial class MainWindow : Window
     private async void ShowDiagnostics(object sender, RoutedEventArgs e)
     {
         if (session is null) return;
-        await session.Dashboard.RefreshAsync(default);
-        var live = session.Dashboard.Slots.Count(slot => slot.IsLive);
-        System.Windows.MessageBox.Show($"Engine: {session.Dashboard.EngineStatusText}\nSlot Live: {live} dari {session.Dashboard.Slots.Count}", "Diagnostik", MessageBoxButton.OK, MessageBoxImage.Information);
+        try { var snapshot = await session.CollectDiagnosticsAsync(default); var text = string.Join("\n\n", snapshot.Items.Select(x => $"[{x.Status}] {x.Name}\n{x.Message}\nTindakan: {x.RecoveryAction}")); var choice = System.Windows.MessageBox.Show(text + "\n\nOK = tutup, Cancel = export support bundle", "Diagnostik", MessageBoxButton.OKCancel, MessageBoxImage.Information); if (choice == MessageBoxResult.Cancel) await ExportSupportBundleAsync(); }
+        catch (Exception ex) { System.Windows.MessageBox.Show($"Diagnostik gagal: {ex.Message}", "Diagnostik", MessageBoxButton.OK, MessageBoxImage.Error); }
     }
+    private async void RepairFirewall(object sender, RoutedEventArgs e) { if (session is null) return; try { var result = await session.RepairFirewallAsync(default); System.Windows.MessageBox.Show(result.Success ? "Firewall Private berhasil diperbaiki." : $"Perbaikan gagal. {result.OperatorMessage}\n\nFallback manual: buka Windows Security → Firewall & network protection → Allow an app, lalu izinkan aplikasi ini pada profile Private.", "Firewall", MessageBoxButton.OK, result.Success ? MessageBoxImage.Information : MessageBoxImage.Warning); } catch (Exception ex) { System.Windows.MessageBox.Show($"Perbaikan memerlukan Windows/UAC. Fallback manual: izinkan port RTMP dan portal hanya pada profile Private.\n{ex.Message}", "Firewall", MessageBoxButton.OK, MessageBoxImage.Warning); } }
+    private async Task ExportSupportBundleAsync() { if (session is null) return; var preview = await session.CreateSupportPreviewAsync(default); var ask = System.Windows.MessageBox.Show(preview, "Preview Support Bundle", MessageBoxButton.OKCancel, MessageBoxImage.Information); if (ask != MessageBoxResult.OK) return; var dialog = new Microsoft.Win32.SaveFileDialog { Filter = "Support bundle|*.txt", FileName = "al-ikhsan-support-bundle.txt" }; if (dialog.ShowDialog() == true) { await session.ExportSupportBundleAsync(dialog.FileName, default); CopyMessage.Text = "Support bundle berhasil diekspor"; } }
 }
