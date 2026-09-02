@@ -15,8 +15,9 @@ public sealed class MediaMtxConfigGeneratorTests
         var keys = new[] { "drone-a", "drone-b", "drone-c", "drone-d", "drone-e", "drone-f" };
         var yaml = MediaMtxConfigGenerator.Generate(Config() with { ActivePaths = keys });
         Assert.Equal(6, keys.Count(key => yaml.Contains($"  {key}:")));
-        Assert.Contains("  drone-a:\n    source: publisher", yaml);
-        Assert.Contains("  drone-f:\n    source: publisher", yaml);
+        Assert.Contains("  drone-a:", yaml);
+        Assert.Contains("  drone-f:", yaml);
+        Assert.Equal(6, yaml.Split("source: publisher", StringSplitOptions.None).Length - 1);
     }
     [Theory] [InlineData("bad/path")] [InlineData("bad key")] public void UnsafePathIsRejected(string path)
     { Assert.Throws<ArgumentException>(() => MediaMtxConfigGenerator.Generate(Config() with { StreamPath = path })); }
