@@ -2,8 +2,7 @@
 
 ## Status produk saat ini
 
-Build yang tersedia sebelum Phase 0–6 lengkap adalah prerelease untuk development
-dan validasi. UI operator penuh, portal QR, preview, dan hardware DJI belum selesai.
+Build yang tersedia sebelum Phase 0–6 lengkap adalah prerelease untuk development dan validasi. Portal QR, diagnostics, support bundle, dan preview WebView2 tersedia; hardware DJI/vMix tetap menunggu validasi perangkat asli.
 
 ## Requirement
 

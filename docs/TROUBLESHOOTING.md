@@ -25,3 +25,11 @@ status `Video masuk` sebelum melakukan probe ulang.
 
 Jalankan Diagnostik dan periksa integritas MediaMTX, konflik port, dan firewall.
 Jangan mematikan process lain secara otomatis.
+
+## Preview WebView2 tidak tampil
+
+Pastikan WebView2 Runtime terpasang, status slot sudah `Video masuk`, dan MediaMTX WebRTC loopback aktif. Output RTSP vMix tetap dapat digunakan bila preview gagal.
+
+## Support bundle
+
+Buka Diagnostik, tinjau isi yang sudah di-redact, lalu export. Bundle tidak boleh berisi stream key, token portal, clipboard, atau data pribadi.

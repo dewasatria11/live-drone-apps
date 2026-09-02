@@ -7,5 +7,7 @@
 5. Salin URL vMix dari slot tersebut.
 6. Di vMix pilih Add Input → Stream/SRT, pilih RTSP over TCP bila tersedia, lalu tempel URL.
 
+Untuk preview, pilih slot yang berstatus `Video masuk` dan buka Preview. Hanya satu preview aktif dan audio default mati.
+
 Jika HP tidak membuka portal, pastikan jaringan tidak mengisolasi client. Jika vMix hitam,
 pastikan status aplikasi sudah `Video masuk` dan salin ulang URL vMix.
