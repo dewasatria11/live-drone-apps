@@ -75,7 +75,16 @@ public sealed class MediaBridgeIntegrationTests
     private static async Task WaitUntilAsync(Func<Task<bool>> condition, TimeSpan timeout)
     { using var cancellation = new CancellationTokenSource(timeout); while (!await condition()) await Task.Delay(100, cancellation.Token); }
     private static int AllocatePort() { using var listener = new TcpListener(IPAddress.Loopback, 0); listener.Start(); return ((IPEndPoint)listener.LocalEndpoint).Port; }
-    private static void AssertPortCanBind(int port) { using var listener = new TcpListener(IPAddress.Loopback, port); listener.Start(); listener.Stop(); }
+    private static void AssertPortCanBind(int port)
+    {
+        SocketException? last = null;
+        for (var attempt = 0; attempt < 50; attempt++)
+        {
+            try { using var listener = new TcpListener(IPAddress.Loopback, port); listener.Start(); listener.Stop(); return; }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.AddressAlreadyInUse) { last = ex; Thread.Sleep(100); }
+        }
+        throw new Xunit.Sdk.XunitException($"Port {port} tidak dapat digunakan kembali setelah shutdown: {last?.Message}");
+    }
     private static void KillAndDispose(Process process) { if (!process.HasExited) { process.Kill(true); process.WaitForExit(3000); } process.Dispose(); }
     private static string FindRepositoryRoot() { var directory = new DirectoryInfo(AppContext.BaseDirectory); while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "PRD_AL_IKHSAN_MEDIA_DRONE_VERSION.md"))) directory = directory.Parent; return directory?.FullName ?? throw new DirectoryNotFoundException("Root repository tidak ditemukan."); }
 }
