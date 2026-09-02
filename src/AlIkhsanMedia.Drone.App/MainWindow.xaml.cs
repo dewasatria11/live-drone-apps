@@ -30,4 +30,12 @@ public partial class MainWindow : Window
     }
     private async void CopyRtmp(object sender, RoutedEventArgs e) { if (session is not null && (sender as WpfButton)?.DataContext is DashboardSlotViewModel slot) { await session.Dashboard.CopyRtmpAsync(slot, default); CopyMessage.Text = "URL berhasil disalin"; } }
     private async void CopyRtsp(object sender, RoutedEventArgs e) { if (session is not null && (sender as WpfButton)?.DataContext is DashboardSlotViewModel slot) { await session.Dashboard.CopyRtspAsync(slot, default); CopyMessage.Text = "URL berhasil disalin"; } }
+    private void ShowGuide(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("1. Hubungkan laptop dan drone pada jaringan yang sama.\n2. Salin URL RTMP ke DJI Fly.\n3. Salin URL RTSP ke vMix.\n4. Pastikan status slot Live sebelum siaran.", "Panduan Setup", MessageBoxButton.OK, MessageBoxImage.Information);
+    private async void ShowDiagnostics(object sender, RoutedEventArgs e)
+    {
+        if (session is null) return;
+        await session.Dashboard.RefreshAsync(default);
+        var live = session.Dashboard.Slots.Count(slot => slot.IsLive);
+        System.Windows.MessageBox.Show($"Engine: {session.Dashboard.EngineStatusText}\nSlot Live: {live} dari {session.Dashboard.Slots.Count}", "Diagnostik", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 }

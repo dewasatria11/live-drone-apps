@@ -6,7 +6,10 @@ public readonly record struct StreamSlotId
     public StreamSlotId(Guid value) { if (value == Guid.Empty) throw new ArgumentException("UUID slot tidak boleh kosong.", nameof(value)); Value = value; }
 }
 public enum EngineState { Stopped, Starting, Ready, Restarting, Faulted }
-public sealed record EngineConfiguration(string ExecutablePath, string ExecutableSha256, string RuntimeDirectory, string StreamPath, string RtmpAddress, string RtspAddress, string ApiAddress, string MetricsAddress);
+public sealed record EngineConfiguration(string ExecutablePath, string ExecutableSha256, string RuntimeDirectory, string StreamPath, string RtmpAddress, string RtspAddress, string ApiAddress, string MetricsAddress, IReadOnlyList<string>? ActivePaths = null)
+{
+    public IReadOnlyList<string> Paths => ActivePaths is { Count: > 0 } ? ActivePaths : [StreamPath];
+}
 public sealed record StartEngineResult(bool Success, string? DiagnosticCode, string? OperatorMessage);
 public sealed record MediaEngineHealth(EngineState State, string Version, DateTimeOffset StartedAt, int RestartCount, string? OperatorMessage, string? DiagnosticCode);
 public sealed record EnginePathSnapshot(string Name, bool Ready, DateTimeOffset? ReadyAt, long BytesReceived, IReadOnlyList<string> Codecs, int ReaderCount);

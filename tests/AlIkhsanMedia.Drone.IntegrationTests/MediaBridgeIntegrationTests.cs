@@ -10,6 +10,36 @@ namespace AlIkhsanMedia.Drone.IntegrationTests;
 
 public sealed class MediaBridgeIntegrationTests
 {
+    [Fact(Timeout = 120000)]
+    public async Task SixPublishersRemainIndependentOnOneMediaMtxEngine()
+    {
+        var root = FindRepositoryRoot();
+        var (relativeBinary, executableHash) = OperatingSystem.IsWindows()
+            ? (Path.Combine("vendor", "mediamtx", "win-x64", "mediamtx.exe"), "114e6c0b514813658e10be55f8ab6eab950ae879943272a59b0a51d55930900a")
+            : (Path.Combine("vendor", "mediamtx", "osx-arm64", "mediamtx"), "77fac2ea9b34fb8b402ec6580f25948df74917fdef69ad6f94fd2bccca239923");
+        var binary = Path.Combine(root, relativeBinary);
+        var runtime = Path.Combine(Path.GetTempPath(), $"al-ikhsan-six-{Guid.NewGuid():N}"); Directory.CreateDirectory(runtime);
+        var ports = Enumerable.Range(0, 4).Select(_ => AllocatePort()).ToArray();
+        var keys = Enumerable.Range(0, 6).Select(_ => SecureStreamKey.Create()).ToArray();
+        var config = new EngineConfiguration(binary, executableHash, runtime, keys[0], $"127.0.0.1:{ports[0]}", $"127.0.0.1:{ports[1]}", $"127.0.0.1:{ports[2]}", $"127.0.0.1:{ports[3]}", keys);
+        await using var service = new MediaMtxService(); var publishers = new List<Process>();
+        try
+        {
+            var started = await service.StartAsync(config, default); Assert.True(started.Success, started.OperatorMessage);
+            publishers.AddRange(keys.Select(key => StartPublisher(MediaUrlBuilder.BuildRtmp(IPAddress.Loopback, ports[0], key).AbsoluteUri)));
+            foreach (var key in keys) await WaitForPathAsync(service, key, default);
+            var packetCounts = await Task.WhenAll(keys.Select(key => ReadPacketsAsync(MediaUrlBuilder.BuildRtsp(ports[1], key).AbsoluteUri)));
+            Assert.All(packetCounts, count => Assert.True(count > 0));
+            KillAndDispose(publishers[2]); publishers[2] = null!;
+            await WaitForPathNotReadyAsync(service, keys[2], default);
+            foreach (var key in keys.Where((_, i) => i != 2)) Assert.Contains((await service.GetPathsAsync(default)), p => p.Name == key && p.Ready);
+            publishers[2] = StartPublisher(MediaUrlBuilder.BuildRtmp(IPAddress.Loopback, ports[0], keys[2]).AbsoluteUri);
+            await WaitForPathAsync(service, keys[2], default);
+            foreach (var key in keys) Assert.Contains((await service.GetPathsAsync(default)), p => p.Name == key && p.Ready);
+        }
+        finally { foreach (var publisher in publishers.Where(p => p is not null)) KillAndDispose(publisher); await service.StopAsync(default); Directory.Delete(runtime, true); }
+    }
+
     [Fact(Timeout = 90000)]
     public async Task RealRtmpToRtspReconnectCrashRecoveryAndCleanup()
     {

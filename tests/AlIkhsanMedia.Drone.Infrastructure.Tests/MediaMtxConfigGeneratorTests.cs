@@ -10,6 +10,14 @@ public sealed class MediaMtxConfigGeneratorTests
         Assert.Contains("apiAddress: 127.0.0.1:9997", yaml); Assert.Contains("overridePublisher: false", yaml);
         Assert.Contains("hls: false", yaml); Assert.Contains("webrtc: false", yaml); Assert.DoesNotContain("runOn", yaml);
     }
+    [Fact] public void ConfigContainsAllActivePathsWithoutChangingEngineEndpoint()
+    {
+        var keys = new[] { "drone-a", "drone-b", "drone-c", "drone-d", "drone-e", "drone-f" };
+        var yaml = MediaMtxConfigGenerator.Generate(Config() with { ActivePaths = keys });
+        Assert.Equal(6, keys.Count(key => yaml.Contains($"  {key}:")));
+        Assert.Contains("  drone-a:\n    source: publisher", yaml);
+        Assert.Contains("  drone-f:\n    source: publisher", yaml);
+    }
     [Theory] [InlineData("bad/path")] [InlineData("bad key")] public void UnsafePathIsRejected(string path)
     { Assert.Throws<ArgumentException>(() => MediaMtxConfigGenerator.Generate(Config() with { StreamPath = path })); }
     [Fact] public async Task IntegrityMismatchIsRejectedBeforeExecution()
