@@ -1,6 +1,7 @@
 <Window x:Class="AlIkhsanMedia.Drone.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         Title="Al Ikhsan Media (Drone Version)" Width="1200" Height="760" MinWidth="1100" MinHeight="700"
         Background="#111513" Foreground="#F4F7F5" WindowStartupLocation="CenterScreen">
   <Window.Resources>
