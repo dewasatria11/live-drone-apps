@@ -32,7 +32,7 @@ $isccCandidates = @(
 ) | Where-Object { $_ -and (Test-Path $_) }
 $iscc = $isccCandidates | Select-Object -First 1
 if (-not $iscc) { throw 'Inno Setup 6 tidak ditemukan pada runner Windows.' }
-$versionOutput = (Get-Item $iscc).VersionInfo.ProductVersion
+$versionOutput = (Get-Item $iscc).VersionInfo.FileVersion
 if ($versionOutput -notmatch '^6\.7\.1(?:\D|$)') { throw "Versi Inno Setup tidak sesuai pin 6.7.1: $versionOutput" }
 $installerName = "AlIkhsanMedia-DroneVersion-Setup-$Version"
 & $iscc "/DAppVersion=$($release.SemVer)" "/DSourceDir=$staging" "/DOutputDir=$output" "/DOutputBaseFilename=$installerName" (Join-Path $root 'installer/AlIkhsanMediaDrone.iss')
