@@ -21,6 +21,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup><ProjectReference Include="../../src/AlIkhsanMedia.Drone.Core/AlIkhsanMedia.Drone.Core.csproj" /></ItemGroup>
+  <ItemGroup><ProjectReference Include="../../src/AlIkhsanMedia.Drone.Core/AlIkhsanMedia.Drone.Core.csproj" /><ProjectReference Include="../../src/AlIkhsanMedia.Drone.SetupPortal/AlIkhsanMedia.Drone.SetupPortal.csproj" /></ItemGroup>
 
 </Project>

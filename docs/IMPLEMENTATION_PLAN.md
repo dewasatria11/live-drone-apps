@@ -145,3 +145,15 @@ Clean run 2026-09-02 dengan .NET SDK 8.0.130:
 Status: automation sudah diimplementasikan dan tervalidasi statis dari macOS.
 Execution Windows/Release belum diklaim karena workspace bukan Git repository dan
 tidak ada push, tag, atau publication yang diizinkan.
+
+## Phase 3–6 execution audit (2026-09-02)
+
+- [x] WPF shell now opens with explicit six-slot dashboard surface and no fabricated
+      stream URLs/status; full service orchestration remains gated on subsequent work.
+- [x] Setup portal token store and embedded Kestrel endpoints have been added with
+      no-store/CSP/nosniff headers and HTML-escaped output.
+- [x] Quick start, troubleshooting, threat model, test plan, and hardware validation
+      evidence template added.
+- [ ] Real WPF startup orchestration, portal wiring, QR, diagnostics/support bundle,
+      WebView2 preview, vMix manual validation, installer lifecycle, and DJI hardware
+      validation remain incomplete and must not be marked as production-ready.

@@ -5,5 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../AlIkhsanMedia.Drone.Core/AlIkhsanMedia.Drone.Core.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -4,6 +4,16 @@
 
 **Status:** Accepted, 2026-09-02.
 
+## ADR-012 — Honest staged UI and portal boundaries
+
+**Status:** Accepted, 2026-09-02.
+
+Phase 3 UI work is exposed as a compilable WPF surface only when its displayed state
+comes from a real orchestration service. Until startup orchestration is wired, the
+surface explicitly says `Belum diperiksa` and never invents URLs, packet counts, or
+engine health. Setup portal tokens are generated independently from stream keys,
+expire within ten minutes, and are rendered with strict local-only response headers.
+
 Core targets platform-neutral .NET 8 and owns domain records and interfaces.
 Infrastructure implements MediaMTX and OS process details. SetupPortal remains a
 separate assembly. App is the Windows-only WPF composition root. A test enforces
