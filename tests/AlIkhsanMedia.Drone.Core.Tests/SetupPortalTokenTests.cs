@@ -32,6 +32,13 @@ public sealed class SetupPortalTokenTests
         var invalid = await client.GetAsync($"http://127.0.0.1:{port}/s/not-a-real-token"); Assert.Equal(System.Net.HttpStatusCode.NotFound, invalid.StatusCode);
     }
 
+    [Fact]
+    public void QrCodeContainsRealSetupPayload()
+    {
+        var uri = new Uri("http://192.168.1.20:8877/s/random-slot-token"); var png = SetupQrCodeGenerator.GeneratePng(uri);
+        Assert.True(png.Length > 100); Assert.Equal(0x89, png[0]); Assert.Equal((byte)'P', png[1]);
+    }
+
     private sealed class TestClock(DateTimeOffset now) : IClock
     { public DateTimeOffset UtcNow { get; private set; } = now; public void Advance(TimeSpan value) => UtcNow += value; }
     private static int ReservePort() { using var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0); listener.Start(); return ((System.Net.IPEndPoint)listener.LocalEndpoint).Port; }

@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="QRCoder" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="../AlIkhsanMedia.Drone.Core/AlIkhsanMedia.Drone.Core.csproj" />
   </ItemGroup>
