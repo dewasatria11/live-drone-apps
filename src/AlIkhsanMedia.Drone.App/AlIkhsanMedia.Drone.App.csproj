@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>AlIkhsanMedia.Drone.App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AlIkhsanMedia.Drone.Core/AlIkhsanMedia.Drone.Core.csproj" />
+    <ProjectReference Include="../AlIkhsanMedia.Drone.Infrastructure/AlIkhsanMedia.Drone.Infrastructure.csproj" />
+    <ProjectReference Include="../AlIkhsanMedia.Drone.SetupPortal/AlIkhsanMedia.Drone.SetupPortal.csproj" />
+  </ItemGroup>
+</Project>

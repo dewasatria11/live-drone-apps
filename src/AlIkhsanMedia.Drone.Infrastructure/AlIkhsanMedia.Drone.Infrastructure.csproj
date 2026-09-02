@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../AlIkhsanMedia.Drone.Core/AlIkhsanMedia.Drone.Core.csproj" /></ItemGroup>
+  <ItemGroup><PackageReference Include="System.Security.Cryptography.ProtectedData" /></ItemGroup>
+</Project>

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-02",
+  "buildTools": [
+    {
+      "name": "FFmpeg/FFprobe",
+      "version": "8.0.1",
+      "usage": "integration-test-only"
+    },
+    {
+      "name": "Inno Setup",
+      "version": "6.7.1",
+      "usage": "windows-installer-build-only"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "MediaMTX",
+      "version": "1.20.1",
+      "sourceUrl": "https://github.com/bluenviron/mediamtx",
+      "releaseUrl": "https://github.com/bluenviron/mediamtx/releases/tag/v1.20.1",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/bluenviron/mediamtx/blob/v1.20.1/LICENSE",
+      "artifacts": [
+        {
+          "rid": "win-x64",
+          "fileName": "mediamtx_v1.20.1_windows_amd64.zip",
+          "url": "https://github.com/bluenviron/mediamtx/releases/download/v1.20.1/mediamtx_v1.20.1_windows_amd64.zip",
+          "sha256": "dc970f8e1f3ad58edafcf536bcd1ffe0adcb4390e7ace9377694a9ea2c1ebe53",
+          "executable": "mediamtx.exe",
+          "executableSha256": "114e6c0b514813658e10be55f8ab6eab950ae879943272a59b0a51d55930900a"
+        },
+        {
+          "rid": "osx-arm64",
+          "fileName": "mediamtx_v1.20.1_darwin_arm64.tar.gz",
+          "url": "https://github.com/bluenviron/mediamtx/releases/download/v1.20.1/mediamtx_v1.20.1_darwin_arm64.tar.gz",
+          "sha256": "7ca21875eb6581ffbdb05fec6af19afe435c1ef1412b3d510c97d2eae774b6e2",
+          "executable": "mediamtx",
+          "executableSha256": "77fac2ea9b34fb8b402ec6580f25948df74917fdef69ad6f94fd2bccca239923"
+        }
+      ]
+    }
+  ]
+}

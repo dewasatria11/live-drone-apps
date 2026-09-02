@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "AlIkhsanMedia.Drone.sln",
+    "projects": [
+      "src/AlIkhsanMedia.Drone.Core/AlIkhsanMedia.Drone.Core.csproj",
+      "src/AlIkhsanMedia.Drone.Infrastructure/AlIkhsanMedia.Drone.Infrastructure.csproj",
+      "src/AlIkhsanMedia.Drone.SetupPortal/AlIkhsanMedia.Drone.SetupPortal.csproj",
+      "tests/AlIkhsanMedia.Drone.Core.Tests/AlIkhsanMedia.Drone.Core.Tests.csproj",
+      "tests/AlIkhsanMedia.Drone.Infrastructure.Tests/AlIkhsanMedia.Drone.Infrastructure.Tests.csproj",
+      "tests/AlIkhsanMedia.Drone.IntegrationTests/AlIkhsanMedia.Drone.IntegrationTests.csproj"
+    ]
+  }
+}
