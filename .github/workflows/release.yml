@@ -60,8 +60,8 @@ jobs:
           if (-not ((ffmpeg -version | Select-Object -First 1) -match '^ffmpeg version 8\.0\.1')) { throw 'FFmpeg test tooling bukan versi 8.0.1.' }
           $iscc = @((Get-Command ISCC.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -ErrorAction SilentlyContinue), "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:ProgramFiles\Inno Setup 6\ISCC.exe") | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
           if (-not $iscc) { throw 'Inno Setup tidak ditemukan.' }
-          $isccVersion = (& $iscc '/?' 2>&1) -join "`n"
-          if ($isccVersion -notmatch '(?m)\b6\.7\.1\b') { throw "Inno Setup bukan versi 6.7.1: $isccVersion" }
+          $isccVersion = (Get-Item $iscc).VersionInfo.ProductVersion
+          if ($isccVersion -notmatch '^6\.7\.1(?:\D|$)') { throw "Inno Setup bukan versi 6.7.1: $isccVersion" }
 
       - name: Restore full solution
         run: dotnet restore AlIkhsanMedia.Drone.sln
