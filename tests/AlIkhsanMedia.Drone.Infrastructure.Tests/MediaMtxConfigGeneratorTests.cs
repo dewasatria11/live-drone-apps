@@ -8,7 +8,7 @@ public sealed class MediaMtxConfigGeneratorTests
         var yaml = MediaMtxConfigGenerator.Generate(Config());
         Assert.Contains("rtmpAddress: 127.0.0.1:1935", yaml); Assert.Contains("rtspAddress: 127.0.0.1:8554", yaml);
         Assert.Contains("apiAddress: 127.0.0.1:9997", yaml); Assert.Contains("overridePublisher: false", yaml);
-        Assert.Contains("hls: false", yaml); Assert.Contains("webrtc: false", yaml); Assert.DoesNotContain("runOn", yaml);
+        Assert.Contains("hls: false", yaml); Assert.Contains("webrtc: true", yaml); Assert.Contains("webrtcAddress: 127.0.0.1:8889", yaml); Assert.DoesNotContain("runOn", yaml);
     }
     [Fact] public void ConfigContainsAllActivePathsWithoutChangingEngineEndpoint()
     {
