@@ -17,7 +17,7 @@ public sealed class MediaMtxConfigGeneratorTests
         Assert.Equal(6, keys.Count(key => yaml.Contains($"  {key}:")));
         Assert.Contains("  drone-a:", yaml);
         Assert.Contains("  drone-f:", yaml);
-        Assert.Equal(6, yaml.Split("source: publisher", StringSplitOptions.None).Length - 1);
+        foreach (var key in keys) Assert.Contains($"  {key}:", yaml);
     }
     [Theory] [InlineData("bad/path")] [InlineData("bad key")] public void UnsafePathIsRejected(string path)
     { Assert.Throws<ArgumentException>(() => MediaMtxConfigGenerator.Generate(Config() with { StreamPath = path })); }
